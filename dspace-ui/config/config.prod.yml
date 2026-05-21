@@ -1,0 +1,92 @@
+# Configurações do DSpace Angular específicas desta instalação.
+production: true
+
+# URL pública da API REST — usada pelo browser para fazer chamadas HTTP.
+# A porta interna do Node.js (4000) é diferente da porta pública (443);
+# o nginx faz o SSL termination e encaminha /server para o backend.
+rest:
+    ssl: true
+    host: testedspace.ufjf.br
+    port: 443
+    nameSpace: /server
+    # URL interna usada pelo SSR para chamar o backend diretamente (sem passar pelo nginx).
+    # ssr.replaceRestUrl substitui esta URL pela pública no estado transferido ao browser.
+    ssrBaseUrl: http://dspace:8080/server
+
+# Configuração do Server-Side Rendering (SSR)
+ssr:
+    inlineCriticalCss: true
+    # Repassa ao browser o estado pré-renderizado pelo servidor (evita re-fetch)
+    transferState: true
+    # Substitui URLs internas (ssrBaseUrl) pelas públicas no transfer state
+    replaceRestUrl: true
+    # Páginas pesadas servidas como CSR puro (sem SSR) para não sobrecarregar o servidor
+    excludePathPatterns:
+        - pattern: "^/communities/[a-f0-9-]{36}/browse(/.*)?$"
+          flag: "i"
+        - pattern: "^/collections/[a-f0-9-]{36}/browse(/.*)?$"
+          flag: "i"
+        - pattern: "^/browse/"
+        - pattern: "^/search$"
+        - pattern: "^/community-list$"
+        - pattern: "^/admin/"
+        - pattern: "^/processes/?"
+        - pattern: "^/notifications/"
+        - pattern: "^/statistics/?"
+        - pattern: "^/access-control/"
+        - pattern: "^/health$"
+    enableSearchComponent: false
+    enableBrowseComponent: false
+
+# Porta interna onde o Node.js escuta — nginx faz SSL termination e expõe :443
+# O nginx corrige port/ssl no /assets/config.json via sub_filter antes de entregar ao browser
+ui:
+    ssl: false
+    host: testedspace.ufjf.br
+    port: 4000
+    nameSpace: /
+    baseUrl: https://testedspace.ufjf.br
+
+# Idioma padrão da interface
+defaultLanguage: pt_BR
+
+# Tema ativo e customizações visuais
+themes:
+    - name: dspace
+      headTags:
+          - tagName: meta
+            attributes:
+                name: theme-color
+                content: "#00457c"
+
+# Autenticação
+auth:
+    ui:
+        timeUntilIdle: 900000 # 15 minutos em ms
+        idleGracePeriod: 300000 # 5 minutos em ms
+
+# Termos de uso e privacidade
+info:
+    enableEndUserAgreement: true
+    enablePrivacyStatement: true
+    enableCOARNotifySupport: true
+    enableCookieConsentPopup: true
+
+geospatialMapViewer:
+    spatialMetadataFields:
+        - "dcterms.spatial"
+
+    spatialFacetDiscoveryConfiguration: "geospatial"
+    spatialPointFilterName: "point"
+
+    enableItemPageFields: false
+    enableBrowseMap: false
+    enableSearchViewMode: false
+
+    tileProviders:
+        - "OpenStreetMap.Mapnik"
+
+    # Reitoria da UFJF - Juiz de Fora/MG
+    defaultCentrePoint:
+        lat: -21.773827
+        lng: -43.368829

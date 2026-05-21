@@ -1,0 +1,45 @@
+services:
+    dspacedb-7:
+        image: postgres:16
+        container_name: dspacedb-7
+        restart: unless-stopped
+        environment:
+            TZ: "${TZ}"
+            POSTGRES_USER: "${DB_USER:-dspace}"
+            POSTGRES_PASSWORD: "${DB_PASSWORD}"
+            POSTGRES_DB: "${DB_NAME:-dspace}"
+        volumes:
+            - ${INITDB_DIR}/00_create_roles.sql:/docker-entrypoint-initdb.d/00_create_roles.sql
+            - ${DB_INIT_SQL_63}:/docker-entrypoint-initdb.d/dspace_63_alterado.sql
+            - ${POSTGRES7_DATA}:/var/lib/postgresql/data
+        networks:
+            - dspace-7-net
+        healthcheck:
+            test:
+                [
+                    "CMD-SHELL",
+                    "pg_isready -U ${DB_USER:-dspace} -d ${DB_NAME:-dspace}",
+                ]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+
+    dspace-7-cli:
+        image: dspace/dspace-cli:dspace-7_x
+        container_name: dspace-7-cli
+        depends_on:
+            dspacedb-7:
+                condition: service_healthy
+        environment:
+            db__P__url: "jdbc:postgresql://dspacedb-7:5432/${DB_NAME:-dspace}"
+            db__P__username: "${DB_USER:-dspace}"
+            db__P__password: "${DB_PASSWORD}"
+            dspace__P__dir: /dspace
+        volumes:
+            - ${ASSETSTORE}:/dspace/assetstore
+        networks:
+            - dspace-7-net
+        profiles: ["cli"]
+
+networks:
+    dspace-7-net:
