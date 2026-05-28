@@ -213,5 +213,5 @@ docker compose -f docker-compose-9.yml run --rm dspace-cli \
 docker exec -it dspace bash
 
 # Backup do banco
-docker exec dspacedb pg_dump -U dspace dspace > backup_$(date +%Y%m%d).sql
+docker exec dspacedb pg_dump -Fc -U dspace dspace > backup_$(date +%Y%m%d).dump
 ```

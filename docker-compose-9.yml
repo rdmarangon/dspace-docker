@@ -82,7 +82,7 @@ services:
             db__P__username: "${DB_USER:-dspace}"
             db__P__password: "${DB_PASSWORD}"
             dspace__P__dir: /dspace
-            solr__P__server: "http://dspacesolr:8983/solr"
+            solr__P__server: "${DSPACE_SOLR_URL:-http://dspacesolr:8983/solr}"
         volumes:
             - ${ASSETSTORE}:/dspace/assetstore
         networks:
