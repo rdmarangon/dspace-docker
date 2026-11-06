@@ -1,4 +1,4 @@
-# Guia de Migração — DSpace 6.3 → 9.x
+# Guia de Migração — DSpace 6.3 → 10.1
 
 Instruções técnicas para executar a migração e operar o ambiente de testes.
 
@@ -43,7 +43,7 @@ Execute este bloco sempre que quiser descartar um ciclo de testes anterior e com
 ```bash
 # Derruba os containers
 docker compose -f docker-compose-7.yml down
-docker compose -f docker-compose-9.yml down
+docker compose -f docker-compose-10.yml down
 
 # Remove os volumes de dados
 rm -rf /docker/volumes/dspace7/postgresql
@@ -124,11 +124,11 @@ docker compose -f docker-compose-7.yml down
 
 ---
 
-## Capítulo 3 — Deploy DSpace 9 (a partir do dump 7.6)
+## Capítulo 3 — Deploy DSpace 10.1 (a partir do dump 7.6)
 
 ### Passo 1 — Limpar o volume do Solr
 
-O índice do DSpace 7 é incompatível com o DSpace 9. Limpe o volume antes de subir:
+O índice do DSpace 7 é incompatível com o DSpace 10. Limpe o volume antes de subir:
 
 ```bash
 rm -rf /docker/volumes/dspace/solr/*
@@ -137,7 +137,7 @@ rm -rf /docker/volumes/dspace/solr/*
 ### Passo 2 — Subir o banco e aguardar a restauração do dump 7.6
 
 ```bash
-docker compose -f docker-compose-9.yml up -d dspacedb
+docker compose -f docker-compose-10.yml up -d dspacedb
 docker logs -f dspacedb
 ```
 
@@ -147,23 +147,23 @@ Aguardar a linha:
 database system is ready to accept connections
 ```
 
-### Passo 3 — Migrar schema 7 → 9
+### Passo 3 — Migrar schema 7.6 → 10.1
 
 ```bash
-docker compose -f docker-compose-9.yml run --rm dspace-cli \
+docker compose -f docker-compose-10.yml run --rm dspace-cli \
     /dspace/bin/dspace database migrate ignored
 ```
 
 ### Passo 4 — Subir toda a stack
 
 ```bash
-docker compose -f docker-compose-9.yml up -d
+docker compose -f docker-compose-10.yml up -d
 ```
 
 ### Passo 5 — Acompanhar os logs
 
 ```bash
-docker compose -f docker-compose-9.yml logs -f
+docker compose -f docker-compose-10.yml logs -f
 ```
 
 Aguardar o DSpace inicializar completamente antes de prosseguir (`Started ServerBootApplication` no log do container `dspace`).
@@ -173,7 +173,7 @@ Aguardar o DSpace inicializar completamente antes de prosseguir (`Started Server
 Os itens do repositório não aparecem na busca até que o índice seja reconstruído:
 
 ```bash
-docker compose -f docker-compose-9.yml run --rm dspace-cli index-discovery -b
+docker compose -f docker-compose-10.yml run --rm dspace-cli index-discovery -b
 ```
 
 Este processo pode demorar vários minutos dependendo do tamanho do repositório.
@@ -200,13 +200,13 @@ Os sitemaps são gravados em `${DSPACE_DIR}/sitemaps` (montado em `/dspace/sitem
 
 ```bash
 # Ver status dos serviços
-docker compose -f docker-compose-9.yml ps
+docker compose -f docker-compose-10.yml ps
 
 # Derrubar tudo
-docker compose -f docker-compose-9.yml down
+docker compose -f docker-compose-10.yml down
 
 # Reindexar o Solr
-docker compose -f docker-compose-9.yml run --rm dspace-cli \
+docker compose -f docker-compose-10.yml run --rm dspace-cli \
     /dspace/bin/dspace index-discovery -b
 
 # Shell no container backend

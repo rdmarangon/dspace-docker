@@ -25,7 +25,7 @@ services:
             retries: 10
 
     dspacesolr:
-        image: dspace/dspace-solr:dspace-9_x
+        image: dspace/dspace-solr:dspace-10.1
         container_name: dspacesolr
         restart: unless-stopped
         volumes:
@@ -43,7 +43,7 @@ services:
             retries: 10
 
     dspace:
-        image: dspace/dspace:dspace-9_x
+        image: dspace/dspace:dspace-10.1
         container_name: dspace
         restart: unless-stopped
         depends_on:
@@ -72,7 +72,7 @@ services:
             start_period: 120s
 
     dspace-cli:
-        image: dspace/dspace-cli:dspace-9_x
+        image: dspace/dspace-cli:dspace-10.1
         container_name: dspace-cli
         depends_on:
             dspacedb:
@@ -90,7 +90,7 @@ services:
         profiles: ["cli"]
 
     dspace-ui:
-        image: dspace/dspace-angular:dspace-9_x
+        image: dspace/dspace-angular:dspace-10.1
         container_name: dspace-ui
         restart: unless-stopped
         depends_on:
