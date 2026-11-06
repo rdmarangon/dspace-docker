@@ -66,9 +66,11 @@ auth:
         idleGracePeriod: 300000 # 5 minutos em ms
 
 # Termos de uso e privacidade
+# Contrato de Usuario e Privacidade desligados (decisao UFJF 07/2026): o texto e
+# padrao do DSpace em ingles e o repositorio antigo nao os tinha. Reavaliar no autodeposito.
 info:
-    enableEndUserAgreement: true
-    enablePrivacyStatement: true
+    enableEndUserAgreement: false
+    enablePrivacyStatement: false
     enableCOARNotifySupport: true
     enableCookieConsentPopup: true
 
